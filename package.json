@@ -1,0 +1,28 @@
+{
+  "name": "easyhousing-front",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@devindex/vue-mask": "^2.0.3",
+    "aos": "^2.3.4",
+    "axios": "^1.7.2",
+    "bootstrap": "^5.3.3",
+    "bootstrap-vue": "^2.23.1",
+    "easyhousing-front": "file:",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "vue3-carousel": "^0.3.3"
+  },
+  "devDependencies": {
+    "@types/aos": "^3.0.7",
+    "@types/bootstrap": "^5.2.10",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.8"
+  }
+}
