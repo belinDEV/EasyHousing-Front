@@ -30,14 +30,14 @@ const router = createRouter({
           component: () => import('../views/admin/Dashboard.vue')
         },
         {
-          path: 'imoveis',
-          name: 'imoveis',
-          component: () => import('../views/admin/Imoveis.vue')
+          path: 'imovel',
+          name: 'imovel',
+          component: () => import('../views/admin/Imovel.vue')
         },
         {
-          path: 'corretores',
-          name: 'corretores',
-          component: () => import('../views/admin/Corretores.vue')
+          path: 'corretor',
+          name: 'corretor',
+          component: () => import('../views/admin/Corretor.vue')
         },
         {
           path: 'users',

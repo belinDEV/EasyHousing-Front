@@ -13,31 +13,23 @@
 
       <!-- Gestão de Imóveis -->
       <router-link 
-        to="/admin/imoveis" 
+        to="/admin/imovel" 
         class="nav" 
-        :class="{ 'nav-selected': activeLink === 'imoveis' }" 
-        @click="setActive('imoveis')">
+        :class="{ 'nav-selected': activeLink === 'imovel' }" 
+        @click="setActive('imovel')">
         <i class="bi bi-house-fill"></i><span>Imóveis</span>
       </router-link>
 
 
       <!-- Corretores -->
       <router-link 
-        to="/admin/corretores" 
+        to="/admin/corretor" 
         class="nav" 
-        :class="{ 'nav-selected': activeLink === 'corretores' }" 
-        @click="setActive('corretores')">
+        :class="{ 'nav-selected': activeLink === 'corretor' }" 
+        @click="setActive('corretor')">
         <i class="bi bi-person-badge-fill"></i><span>Corretores</span>
       </router-link>
-
-      <!-- Gerenciamento Geral -->
-      <router-link 
-        to="/admin/users" 
-        class="nav" 
-        :class="{ 'nav-selected': activeLink === 'users' }" 
-        @click="setActive('users')">
-        <i class="bi bi-people-fill"></i><span>Usuários</span>
-      </router-link>
+    
  
     </div>
 

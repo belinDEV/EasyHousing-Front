@@ -65,7 +65,7 @@
               <span v-if="state.id">Alterar</span>
               <span v-else>Cadastrar</span>
             </button>
-            <router-link to="/admin/imoveis" class="btn btn-danger">Cancelar</router-link>
+            <router-link to="/admin/imovel" class="btn btn-danger">Cancelar</router-link>
           </div>
         </form>
       </div>
@@ -142,7 +142,7 @@ async function novoImovel() {
       }
     }
 
-    router.push("/admin/imoveis");
+    router.push("/admin/imovel");
   } catch (error) {
     console.error("Erro ao salvar imóvel:", error);
   }
