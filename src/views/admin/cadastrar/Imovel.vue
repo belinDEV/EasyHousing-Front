@@ -28,6 +28,16 @@
               />
             </div>
             <div class="col-sm-2">
+              <label for="qtdBanheiro" class="form-label">Número de Banheiros</label>
+              <input
+                type="number"
+                id="qtdBanheiro"
+                placeholder="Número de banheiros:"
+                required
+                v-model="state.imovel.qtdBanheiro"
+              />
+            </div>
+            <div class="col-sm-2">
               <label for="garagem" class="form-label">Garagem</label>
               <select id="garagem" required v-model="state.imovel.garagem">
                 <option :value="true">Sim</option>
@@ -35,13 +45,83 @@
               </select>
             </div>
             <div class="col-sm-2">
-              <label for="descricao" class="form-label">Descrição</label>
-              <textarea
-                id="descricao"
-                placeholder="Descrição do imóvel:"
+              <label for="status" class="form-label">Status</label>
+              <input
+                type="text"
+                id="status"
+                placeholder="Status do imóvel:"
                 required
-                v-model="state.imovel.descricao"
-              ></textarea>
+                v-model="state.imovel.status"
+              />
+            </div>
+            <div class="col-sm-2">
+              <label for="cep" class="form-label">CEP</label>
+              <input
+                type="text"
+                id="cep"
+                placeholder="CEP do imóvel:"
+                required
+                v-model="state.imovel.cep"
+              />
+            </div>
+            <div class="col-sm-2">
+              <label for="tipo" class="form-label">Tipo</label>
+              <input
+                type="text"
+                id="tipo"
+                placeholder="Tipo do imóvel:"
+                required
+                v-model="state.imovel.tipo"
+              />
+            </div>
+            <div class="col-sm-2">
+              <label for="financiamento" class="form-label">Financiamento</label>
+              <select id="financiamento" required v-model="state.imovel.financiamento">
+                <option :value="true">Sim</option>
+                <option :value="false">Não</option>
+              </select>
+            </div>
+            <div class="col-sm-2">
+              <label for="contrato" class="form-label">Contrato</label>
+              <input
+                type="text"
+                id="contrato"
+                placeholder="Contrato do imóvel:"
+                required
+                v-model="state.imovel.contrato"
+              />
+            </div>
+            <div class="col-sm-2">
+              <label for="urn" class="form-label">URN</label>
+              <input
+                type="text"
+                id="urn"
+                placeholder="URN do imóvel:"
+                required
+                v-model="state.imovel.urn"
+              />
+            </div>
+            <div class="col-sm-2">
+              <label for="latitude" class="form-label">Latitude</label>
+              <input
+                type="number"
+                step="0.00000001"
+                id="latitude"
+                placeholder="Latitude do imóvel:"
+                required
+                v-model="state.imovel.latitude"
+              />
+            </div>
+            <div class="col-sm-2">
+              <label for="longitude" class="form-label">Longitude</label>
+              <input
+                type="number"
+                step="0.00000001"
+                id="longitude"
+                placeholder="Longitude do imóvel:"
+                required
+                v-model="state.imovel.longitude"
+              />
             </div>
             <div class="col-sm-2">
               <label for="corretor" class="form-label">Corretor</label>
@@ -57,8 +137,17 @@
             </div>
           </div>
           <div class="col-md-12 mt-4">
-            <label for="IMG" class="form-label styled-file-label">Adicionar Imagem <br /> <i class="bi bi-images"></i></label>
-            <input id="IMG" type="file" class="form-file-input" multiple @change="addImage" />
+            <label for="IMG" class="form-label styled-file-label">
+              Adicionar Imagem <br />
+              <i class="bi bi-images"></i>
+            </label>
+            <input
+              id="IMG"
+              type="file"
+              class="form-file-input"
+              multiple
+              @change="addImage"
+            />
           </div>
           <div class="text-end mt-3">
             <button type="submit" class="btn btn-primary me-2">
@@ -84,11 +173,21 @@ const state = reactive({
   imovel: {
     qtdQuarto: "",
     garagem: false,
+    qtdBanheiro: "",
+    status: "",
+    cep: "",
+    tipo: "",
+    financiamento: false,
     descricao: "",
+    contrato: "",
+    urn: "",
+    latitude: null,
+    longitude: null,
     corretorId: "",
   },
   corretores: [],
   images: [],
+  existingImages: [], // Para imagens existentes ao editar
   loading: false,
 });
 
@@ -116,7 +215,7 @@ async function getImovelId(id) {
   try {
     const { data } = await services.imovel.getById(id);
     state.imovel = data;
-    state.images = data.images || [];
+    state.existingImages = data.images || [];
   } catch (error) {
     console.error("Erro ao buscar imóvel:", error);
   }
@@ -131,9 +230,10 @@ async function novoImovel() {
       response = await services.imovel.salvar(state.imovel);
     }
 
-    // Upload de imagens, se houver
+    const imovelId = response.data.id;
+
+    // Upload de novas imagens
     if (state.images.length > 0) {
-      const imovelId = response.data.id;
       for (let image of state.images) {
         const formData = new FormData();
         formData.append("imovelId", imovelId);
@@ -158,48 +258,3 @@ function addImage(event) {
   }
 }
 </script>
-
-<style scoped>
-a {
-  text-decoration: none;
-}
-
-main {
-  margin: 100px 10px 10px 10px;
-}
-
-.card {
-  background: #212121;
-  border-radius: 10px;
-}
-
-.card h5 {
-  color: #0f5;
-}
-
-.form-file-input {
-  display: none;
-}
-
-.styled-file-label {
-  display: inline-block;
-  width: 100%;
-  background-color: transparent;
-  color: #0f5;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: center;
-  border: 1px solid #0f5;
-}
-
-.styled-file-label:hover {
-  border: 1px solid #fff;
-  color: #fff;
-}
-
-.styled-file-label:active {
-  border: 1px solid #fff;
-  color: #fff;
-}
-</style>

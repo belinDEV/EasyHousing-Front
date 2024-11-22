@@ -63,12 +63,12 @@ const router = createRouter({
         },
         // Rotas de cadastrar
         {
-          path: 'cadastrar/imovel/:id',
+          path: 'cadastrar/imovel',
           name: 'cadastrar-imovel',
           component: () => import('../views/admin/cadastrar/Imovel.vue')
         },
         {
-            path: 'cadastrar/corretor/:id',
+            path: 'cadastrar/corretor/',
             name: 'cadastrar-corretor',
             component: () => import('../views/admin/cadastrar/Corretor.vue')
           

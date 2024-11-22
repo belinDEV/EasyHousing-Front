@@ -18,7 +18,7 @@ async function testImageUrl(url) {
 
 export default (httpClient) => ({
   getAll: async () => {
-    const response = await httpClient.get('/imoveis'); // Busca todos os imoveiss do backend
+    const response = await httpClient.get('/imovel'); // Busca todos os imoveiss do backend
     const dataWithImageUrls = await Promise.all(response.data.map(async imovel => { // Processa cada imoveis
       const imagesWithUrls = await Promise.all(imovel.images.map(async imgObj => { // Processa cada imagem do imoveis
         const imageUrl = getImageUrl(imgObj.image); // Gera a URL da imagem
@@ -37,7 +37,7 @@ export default (httpClient) => ({
   },
 
   getById: async (id) => {
-    const response = await httpClient.get('/imoveis/' + id); // Busca o imoveis pelo ID
+    const response = await httpClient.get('/imovel/' + id); // Busca o imoveis pelo ID
     const imovel = response.data; // Obtém os dados do imoveis
     const imagesWithUrls = await Promise.all(imovel.images.map(async imgObj => { // Processa cada imagem do imoveis
       const imageUrl = getImageUrl(imgObj.image); // Gera a URL da imagem
@@ -55,7 +55,7 @@ export default (httpClient) => ({
   },
 
   getImovelByTipo: async (tipoImovel) => {
-    const response = await httpClient.get('/imoveis/imovel/' + tipoImovel); // Busca imoveis pelo tipo de dieta
+    const response = await httpClient.get('/imovel/imovel/' + tipoImovel); // Busca imoveis pelo tipo de imovel
     const dataWithImageUrls = await Promise.all(response.data.map(async imovel => { // Processa cada imoveis na lista
       const imagesWithUrls = await Promise.all(imovel.images.map(async imgObj => { // Processa cada imagem do imoveis
         const imageUrl = getImageUrl(imgObj.image); // Gera a URL da imagem
@@ -94,7 +94,7 @@ export default (httpClient) => ({
       }
     }
     catch (error) {
-      console.error('Erro ao salvar dieta:', error);
+      console.error('Erro ao salvar imovel:', error);
       throw error;
     }
   },

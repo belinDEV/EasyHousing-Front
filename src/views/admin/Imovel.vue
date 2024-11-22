@@ -17,6 +17,7 @@
       <thead>
         <tr>
           <th scope="col">#</th>
+          <th scope="col">Imagens</th>
           <th scope="col">Tipo</th>
           <th scope="col">Quartos</th>
           <th scope="col">Banheiros</th>
@@ -31,6 +32,11 @@
       <tbody>
         <tr v-for="imovel in state.imoveis" :key="imovel.id">
           <td scope="row">{{ imovel.id }}</td>
+          <td>
+            <div class="image-container">
+              <img v-for="image in imovel.images" :key="image.id" :src="image.url" class="imovel-image" alt="Imagem do Imóvel" />
+            </div>
+          </td>
           <td>{{ imovel.tipo }}</td>
           <td>{{ imovel.qtdQuarto }}</td>
           <td>{{ imovel.qtdBanheiro }}</td>
@@ -63,7 +69,10 @@ const state = reactive({
 async function getImoveis() {
   try {
     const { data } = await services.imovel.getAll();
-    state.imoveis = data;
+    state.imoveis = data.map(imovel => ({
+      ...imovel,
+      images: imovel.images || [], // Garante que a lista de imagens existe
+    }));
   } catch (error) {
     console.error('Erro ao buscar os imóveis:', error);
   }
@@ -94,7 +103,7 @@ main {
 
 .card {
   background: #212121;
-  border-radius: 10px 10px 0px 0px;
+  border-radius: 10px 0px 0px 0px;
 }
 
 .card h5 {
@@ -137,5 +146,18 @@ td {
 
 .btn {
   margin-right: 5px;
+}
+
+.image-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.imovel-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 </style>
