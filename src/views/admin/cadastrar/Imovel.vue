@@ -13,146 +13,77 @@
         <div class="line-form"></div>
         <form @submit.prevent="novoImovel">
           <div class="row">
+            <!-- Campos do Imóvel -->
             <div class="col-sm-2" v-if="state.id">
               <label for="id" class="form-label">ID</label>
               <input type="text" v-model="state.id" id="id" readonly />
             </div>
-            <div class="col-sm-2">
-              <label for="qtdQuarto" class="form-label">Número de Quartos</label>
+            <div class="col-sm-2" v-for="field in fields" :key="field.id">
+              <label :for="field.id" class="form-label">{{ field.label }}</label>
               <input
-                type="number"
-                id="qtdQuarto"
-                placeholder="Número de quartos:"
+                v-if="field.type !== 'select'"
+                :type="field.type"
+                :id="field.id"
+                :placeholder="field.placeholder"
                 required
-                v-model="state.imovel.qtdQuarto"
+                v-model="state.imovel[field.key]"
               />
-            </div>
-            <div class="col-sm-2">
-              <label for="qtdBanheiro" class="form-label">Número de Banheiros</label>
-              <input
-                type="number"
-                id="qtdBanheiro"
-                placeholder="Número de banheiros:"
+              <select
+                v-else
+                :id="field.id"
                 required
-                v-model="state.imovel.qtdBanheiro"
-              />
-            </div>
-            <div class="col-sm-2">
-              <label for="garagem" class="form-label">Garagem</label>
-              <select id="garagem" required v-model="state.imovel.garagem">
-                <option :value="true">Sim</option>
-                <option :value="false">Não</option>
+                v-model="state.imovel[field.key]"
+              >
+                <option v-for="option in field.options" :key="option.value" :value="option.value">
+                  {{ option.text }}
+                </option>
               </select>
             </div>
-            <div class="col-sm-2">
-              <label for="status" class="form-label">Status</label>
-              <input
-                type="text"
-                id="status"
-                placeholder="Status do imóvel:"
-                required
-                v-model="state.imovel.status"
-              />
-            </div>
-            <div class="col-sm-2">
-              <label for="cep" class="form-label">CEP</label>
-              <input
-                type="text"
-                id="cep"
-                placeholder="CEP do imóvel:"
-                required
-                v-model="state.imovel.cep"
-              />
-            </div>
-            <div class="col-sm-2">
-              <label for="tipo" class="form-label">Tipo</label>
-              <input
-                type="text"
-                id="tipo"
-                placeholder="Tipo do imóvel:"
-                required
-                v-model="state.imovel.tipo"
-              />
-            </div>
-            <div class="col-sm-2">
-              <label for="financiamento" class="form-label">Financiamento</label>
-              <select id="financiamento" required v-model="state.imovel.financiamento">
-                <option :value="true">Sim</option>
-                <option :value="false">Não</option>
-              </select>
-            </div>
-            <div class="col-sm-2">
-              <label for="contrato" class="form-label">Contrato</label>
-              <input
-                type="text"
-                id="contrato"
-                placeholder="Contrato do imóvel:"
-                required
-                v-model="state.imovel.contrato"
-              />
-            </div>
-            <div class="col-sm-2">
-              <label for="urn" class="form-label">URN</label>
-              <input
-                type="text"
-                id="urn"
-                placeholder="URN do imóvel:"
-                required
-                v-model="state.imovel.urn"
-              />
-            </div>
-            <div class="col-sm-2">
-              <label for="latitude" class="form-label">Latitude</label>
-              <input
-                type="number"
-                step="0.00000001"
-                id="latitude"
-                placeholder="Latitude do imóvel:"
-                required
-                v-model="state.imovel.latitude"
-              />
-            </div>
-            <div class="col-sm-2">
-              <label for="longitude" class="form-label">Longitude</label>
-              <input
-                type="number"
-                step="0.00000001"
-                id="longitude"
-                placeholder="Longitude do imóvel:"
-                required
-                v-model="state.imovel.longitude"
-              />
-            </div>
+
+            <!-- Corretor -->
             <div class="col-sm-2">
               <label for="corretor" class="form-label">Corretor</label>
               <select id="corretor" required v-model="state.imovel.corretorId">
-                <option
-                  v-for="corretor in state.corretores"
-                  :key="corretor.id"
-                  :value="corretor.id"
-                >
+                <option v-for="corretor in state.corretores" :key="corretor.id" :value="corretor.id">
                   {{ corretor.nome }}
                 </option>
               </select>
             </div>
+
+            <!-- Upload de Imagens -->
+            <div class="col-md-12 mt-4">
+              <label for="IMG" class="form-label styled-file-label">
+                Adicionar Imagem <br />
+                <i class="bi bi-images"></i>
+              </label>
+              <input
+                id="IMG"
+                type="file"
+                class="form-file-input"
+                multiple
+                @change="addImage"
+              />
+              <div class="image-preview">
+                <div
+                  v-for="(image, index) in state.images"
+                  :key="index"
+                  class="image-item"
+                >
+                  <img :src="image.imageUrl" alt="Preview da Imagem" />
+                  <button type="button" class="remove-btn" @click="removeImage(index)">
+                    Remover
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="col-md-12 mt-4">
-            <label for="IMG" class="form-label styled-file-label">
-              Adicionar Imagem <br />
-              <i class="bi bi-images"></i>
-            </label>
-            <input
-              id="IMG"
-              type="file"
-              class="form-file-input"
-              multiple
-              @change="addImage"
-            />
-          </div>
+
+          <!-- Botões de Ação -->
           <div class="text-end mt-3">
-            <button type="submit" class="btn btn-primary me-2">
+            <button type="submit" class="btn btn-primary me-2" :disabled="state.loading">
               <span v-if="state.id">Alterar</span>
               <span v-else>Cadastrar</span>
+              <i v-if="state.loading" class="bi bi-arrow-repeat spinner"></i>
             </button>
             <router-link to="/admin/imovel" class="btn btn-danger">Cancelar</router-link>
           </div>
@@ -191,6 +122,20 @@ const state = reactive({
   loading: false,
 });
 
+const fields = [
+  { id: "qtdQuarto", label: "Número de Quartos", key: "qtdQuarto", type: "number", placeholder: "Número de quartos" },
+  { id: "qtdBanheiro", label: "Número de Banheiros", key: "qtdBanheiro", type: "number", placeholder: "Número de banheiros" },
+  { id: "garagem", label: "Garagem", key: "garagem", type: "select", options: [{ value: true, text: "Sim" }, { value: false, text: "Não" }] },
+  { id: "status", label: "Status", key: "status", type: "text", placeholder: "Status do imóvel" },
+  { id: "cep", label: "CEP", key: "cep", type: "text", placeholder: "CEP do imóvel" },
+  { id: "tipo", label: "Tipo", key: "tipo", type: "text", placeholder: "Tipo do imóvel" },
+  { id: "financiamento", label: "Financiamento", key: "financiamento", type: "select", options: [{ value: true, text: "Sim" }, { value: false, text: "Não" }] },
+  { id: "contrato", label: "Contrato", key: "contrato", type: "text", placeholder: "Contrato do imóvel" },
+  { id: "urn", label: "URN", key: "urn", type: "text", placeholder: "URN do imóvel" },
+  { id: "latitude", label: "Latitude", key: "latitude", type: "number", placeholder: "Latitude do imóvel" },
+  { id: "longitude", label: "Longitude", key: "longitude", type: "number", placeholder: "Longitude do imóvel" },
+];
+
 onMounted(() => {
   if (router.currentRoute.value.params.id !== undefined) {
     state.id = router.currentRoute.value.params.id;
@@ -223,6 +168,7 @@ async function getImovelId(id) {
 
 async function novoImovel() {
   try {
+    state.loading = true;
     let response;
     if (state.id) {
       response = await services.imovel.update(state.id, state.imovel);
@@ -245,6 +191,8 @@ async function novoImovel() {
     router.push("/admin/imovel");
   } catch (error) {
     console.error("Erro ao salvar imóvel:", error);
+  } finally {
+    state.loading = false;
   }
 }
 
@@ -257,4 +205,12 @@ function addImage(event) {
     state.images.push(objImage);
   }
 }
+
+function removeImage(index) {
+  state.images.splice(index, 1);
+}
 </script>
+
+<style scoped>
+/* Styles... */
+</style>

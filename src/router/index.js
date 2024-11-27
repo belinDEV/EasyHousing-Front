@@ -47,17 +47,17 @@ const router = createRouter({
 
         // Rotas de alterar
         {
-          path: 'atualizar/imovel/:id',
-          name: 'atualizar-imovel',
+          path: 'alterar/imovel',
+          name: 'alterar-imovel',
           component: () => import('../views/admin/cadastrar/Imovel.vue')
         },
         {
-          path: 'alterar/user/:id',
+          path: 'alterar/user',
           name: 'alterar-user',
           component: () => import('../views/admin/cadastrar/User.vue')
         },
         {
-          path: 'alterar/corretor/:id',
+          path: 'alterar/corretor',
           name: 'alterar-corretor',
           component: () => import('../views/admin/cadastrar/Corretor.vue')
         },
@@ -68,7 +68,7 @@ const router = createRouter({
           component: () => import('../views/admin/cadastrar/Imovel.vue')
         },
         {
-            path: 'cadastrar/corretor/',
+            path: 'cadastrar/corretor',
             name: 'cadastrar-corretor',
             component: () => import('../views/admin/cadastrar/Corretor.vue')
           

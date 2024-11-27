@@ -34,10 +34,7 @@
           <td>{{ corretor.contato || 'Não informado' }}</td>
           <td>{{ corretor.descricao || 'Sem descrição' }}</td>
           <td>
-            <router-link :to="{ name: 'atualizar-corretor', params: { id: corretor.id } }" class="btn btn-primary"
-              title="Alterar">
-              <i class="bi bi-pencil"></i>
-            </router-link>
+         
             <a @click="deleteCorretor(corretor.id)" class="btn btn-danger" title="Deletar"><i class="bi bi-trash"></i></a>
           </td>
         </tr>

@@ -69,7 +69,11 @@ const state = reactive({
 async function getImoveis() {
   try {
     const { data } = await services.imovel.getAll();
-    state.imoveis = data.map(imovel => ({
+
+    // Verifica se os dados possuem a propriedade 'id'
+    const validData = data.filter(imovel => imovel && imovel.id);
+
+    state.imoveis = validData.map(imovel => ({
       ...imovel,
       images: imovel.images || [], // Garante que a lista de imagens existe
     }));
@@ -78,15 +82,27 @@ async function getImoveis() {
   }
 }
 
+
+
 async function deleteImovel(id) {
+  if (!id) {
+    console.error('ID inválido para exclusão:', id);
+    alert('Imóvel não encontrado. Não é possível excluir.');
+    return;
+  }
+
   if (!confirm('Tem certeza que deseja excluir este Imóvel?')) return;
+
   try {
     await services.imovel.delete(id);
+    console.log(`Imóvel com ID ${id} excluído com sucesso`);
     getImoveis(); // Atualiza a lista após a exclusão
   } catch (error) {
     console.error('Erro ao excluir imóvel:', error);
+    alert('Erro ao excluir o imóvel. Por favor, tente novamente.');
   }
 }
+
 
 // Inicializa os dados ao montar o componente
 onMounted(getImoveis);

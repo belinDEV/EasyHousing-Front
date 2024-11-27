@@ -1,10 +1,30 @@
 function getImageUrl(imagePath) {
-  if (!imagePath) return ''; // Verifica se o caminho da imagem é válido
+  if (!imagePath || typeof imagePath !== 'string') {
+    console.warn('Caminho de imagem inválido:', imagePath);
+    return ''; // Retorna vazio para caminhos inválidos
+  }
+
   const baseUrl = 'http://localhost:8070/uploads/';
-  const cleanedPath = imagePath.replace(/\\/g, '/').split('/').pop(); // Substitui as barras invertidas por barras normais e obtém o nome do arquivo
-  const finalUrl = baseUrl + cleanedPath; // Concatena a URL base com o nome do arquivo
+
+  // Se o caminho já for uma URL completa, retorna sem alterações
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+
+  // Limpa o caminho e extrai o nome do arquivo
+  const cleanedPath = imagePath.replace(/\\/g, '/').split('/').pop();
+
+  // Verifica se o nome do arquivo parece válido
+  if (!cleanedPath || !cleanedPath.includes('.')) {
+    console.warn('Nome de arquivo inválido:', cleanedPath);
+    return ''; // Retorna vazio para nomes de arquivo inválidos
+  }
+
+  // Concatena a URL base e o caminho limpo
+  const finalUrl = baseUrl + cleanedPath;
   return finalUrl;
 }
+
 
 async function testImageUrl(url) {
   try {
@@ -17,41 +37,24 @@ async function testImageUrl(url) {
 }
 
 export default (httpClient) => ({
-  getAll: async () => {
-    const response = await httpClient.get('/imovel'); // Busca todos os imoveiss do backend
-    const dataWithImageUrls = await Promise.all(response.data.map(async imovel => { // Processa cada imoveis
-      const imagesWithUrls = await Promise.all(imovel.images.map(async imgObj => { // Processa cada imagem do imoveis
-        const imageUrl = getImageUrl(imgObj.image); // Gera a URL da imagem
-        const isValid = await testImageUrl(imageUrl); // Testa se a URL da imagem é válida
-        return {
-          ...imgObj, // Mantém todas as propriedades originais do objeto de imagem
-          imageUrl: isValid ? imageUrl : 'URL invalida ou imagem não encontrada' // Adiciona a URL da imagem ou uma mensagem de erro se a URL não for válida
-        };
-      }));
-      return {
-        ...imovel, // Mantém todas as propriedades originais do imoveis
-        images: imagesWithUrls // Substitui o array de imagens pelo array com URLs processadas
-      };
-    }));
-    return { data: dataWithImageUrls }; // Retorna os dados processados
-  },
 
-  getById: async (id) => {
-    const response = await httpClient.get('/imovel/' + id); // Busca o imoveis pelo ID
-    const imovel = response.data; // Obtém os dados do imoveis
-    const imagesWithUrls = await Promise.all(imovel.images.map(async imgObj => { // Processa cada imagem do imoveis
-      const imageUrl = getImageUrl(imgObj.image); // Gera a URL da imagem
-      const isValid = await testImageUrl(imageUrl); // Testa se a URL da imagem é válida
-      return {
-        ...imgObj, // Mantém todas as propriedades originais do objeto de imagem
-        imageUrl: isValid ? imageUrl : 'URL invalida ou imagem não encontrada' // Adiciona a URL da imagem ou uma mensagem de erro se a URL não for válida
-      };
-    }));
-    const imovelWithImages = {
-      ...imovel, // Mantém todas as propriedades originais do imoveis
-      images: imagesWithUrls // Substitui o array de imagens pelo array com URLs processadas
-    };
-    return { data: imovelWithImages }; // Retorna o objeto do imoveis com as imagens processadas
+  getAll: async () => {
+    const response = await httpClient.get('/imovel');
+    const dataWithImageUrls = await Promise.all(
+      response.data.map(async (imovel) => {
+        // Garante que 'images' não seja null e trata os objetos de imagem
+        const imagesWithUrls = (imovel.images || []).map((imgObj) => {
+          const imageUrl = getImageUrl(imgObj.url);
+          return { ...imgObj, imageUrl };
+        });
+  
+        return {
+          ...imovel,
+          images: imagesWithUrls, // Sempre retorna uma lista, mesmo que vazia
+        };
+      })
+    );
+    return { data: dataWithImageUrls };
   },
 
   getImovelByTipo: async (tipoImovel) => {
@@ -114,7 +117,7 @@ export default (httpClient) => ({
 
   saveImage: async (formImagem) => {
     let headers = { "Content-Type": "multipart/form-data" }
-    const response = httpClient.post('/images/save', formImagem, { headers })
+    const response = httpClient.post('/api/image/salvar', formImagem, { headers });
     return {
       data: response.data,
     };
